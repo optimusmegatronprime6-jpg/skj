@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi — Interactive Visualizer</title>
+    <meta name="description" content="Interactive Tower of Hanoi solver with step-by-step visualization and time complexity analysis">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --bg-card-hover: #222845;
+            --surface: #252b45;
+            --border: rgba(99, 102, 241, 0.15);
+            --border-hover: rgba(99, 102, 241, 0.35);
+            --text-primary: #f0f1f5;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.25);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gradient-start: #6366f1;
+            --gradient-end: #a855f7;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168,85,247,0.06), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 1rem;
+            border-radius: 100px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-light);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .header__badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end), #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease 0.15s both;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+        }
+
+        .control-group label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .control-group select,
+        .control-group input[type="range"] {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.6rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .control-group select:focus {
+            border-color: var(--accent);
+        }
+
+        .control-group input[type="range"] {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--surface);
+            border: none;
+            padding: 0;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .speed-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-light);
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            outline: none;
+        }
+
+        .btn--primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn--primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn--primary:active { transform: translateY(0); }
+
+        .btn--secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn--secondary:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+        }
+
+        .btn--danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn--danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Canvas area */
+        .visualization {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease 0.3s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visualization::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.5;
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        .status-item__label {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .status-item__value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent-light);
+        }
+
+        .status-item__value.completed {
+            color: var(--success);
+        }
+
+        /* Info panels */
+        .panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            animation: fadeInUp 0.6s ease 0.45s both;
+        }
+
+        @media (max-width: 768px) {
+            .panels {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .panel:hover {
+            border-color: var(--border-hover);
+        }
+
+        .panel__header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .panel__icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .panel__icon--algo {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .panel__icon--complexity {
+            background: rgba(168, 85, 247, 0.15);
+        }
+
+        .panel__title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .panel__code {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.7;
+            overflow-x: auto;
+            color: var(--text-secondary);
+        }
+
+        .panel__code .kw { color: #c084fc; }
+        .panel__code .fn { color: #60a5fa; }
+        .panel__code .cm { color: #4b5563; font-style: italic; }
+        .panel__code .st { color: #34d399; }
+        .panel__code .num { color: #fbbf24; }
+        .panel__code .op { color: #f87171; }
+
+        .complexity-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .complexity-table th,
+        .complexity-table td {
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .complexity-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .complexity-table td {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .complexity-table tr:last-child td { border-bottom: none; }
+
+        .complexity-table .highlight {
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .derivation {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            line-height: 1.9;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .derivation .eq { color: var(--accent-light); }
+        .derivation .result { color: var(--success); font-weight: 600; }
+
+        /* Move log */
+        .move-log {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .move-log::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .move-log::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .move-log::-webkit-scrollbar-thumb {
+            background: var(--surface);
+            border-radius: 2px;
+        }
+
+        .move-entry {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.35rem 0;
+            font-size: 0.78rem;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .move-entry.active {
+            opacity: 1;
+        }
+
+        .move-entry.done {
+            opacity: 0.35;
+        }
+
+        .move-entry__num {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent);
+            min-width: 28px;
+        }
+
+        .move-entry__text {
+            color: var(--text-secondary);
+        }
+
+        .move-entry__text span {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header__badge">Recursive Algorithm</div>
+            <h1>Tower of Hanoi</h1>
+            <p>Interactive visualization with time complexity O(2ⁿ)</p>
+        </header>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label for="diskCount">Disks</label>
+                <select id="diskCount">
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Speed</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span class="speed-val" id="speedVal">5×</span>
+            </div>
+            <button class="btn btn--primary" id="btnSolve">▶ Solve</button>
+            <button class="btn btn--secondary" id="btnStep" disabled>⏭ Step</button>
+            <button class="btn btn--secondary" id="btnPause" disabled>⏸ Pause</button>
+            <button class="btn btn--danger" id="btnReset">↺ Reset</button>
+        </div>
+
+        <!-- Visualization -->
+        <div class="visualization">
+            <div class="canvas-wrapper">
+                <canvas id="hanoiCanvas" width="960" height="340"></canvas>
+            </div>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-item__label">Move</span>
+                    <span class="status-item__value" id="moveCounter">0 / 0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-item__label">T(n)</span>
+                    <span class="status-item__value" id="formulaDisplay">2³ − 1 = 7</span>
+                </div>
+   xx             <div class="status-item">
+                    <span class="status-item__label">Status</span>
+                    <span class="status-item__value" id="statusText">Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Panels -->
+        <div class="panels">
+            <!-- Algorithm Panel -->
+            <div class="panel">
+                <div class="panel__header">
+                    <div class="panel__icon panel__icon--algo">🔄</div>
+                    <h2 class="panel__title">Recursive Algorithm</h2>
+                </div>
+                <div class="panel__code">
+<span class="kw">function</span> <span class="fn">hanoi</span>(n, src, dest, aux):<br>
+&nbsp;&nbsp;<span class="kw">if</span> n <span class="op">==</span> <span class="num">1</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;move(src <span class="op">→</span> dest) <span class="cm">// base case</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span><br>
+<br>
+&nbsp;&nbsp;<span class="fn">hanoi</span>(n<span class="op">-</span><span class="num">1</span>, src, aux, dest)<br>
+&nbsp;&nbsp;move(src <span class="op">→</span> dest) <span class="cm">// move largest</span><br>
+&nbsp;&nbsp;<span class="fn">hanoi</span>(n<span class="op">-</span><span class="num">1</span>, aux, dest, src)
+                </div>
+                <div id="moveLog" class="move-log"></div>
+            </div>
+
+            <!-- Complexity Panel -->
+            <div class="panel">
+                <div class="panel__header">
+                    <div class="panel__icon panel__icon--complexity">📊</div>
+                    <h2 class="panel__title">Time Complexity Derivation</h2>
+                </div>
+                <table class="complexity-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Complexity</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Time</td>
+                            <td class="highlight">O(2ⁿ)</td>
+                            <td>2ⁿ − 1 moves</td>
+                        </tr>
+                        <tr>
+                            <td>Space</td>
+                            <td class="highlight">O(n)</td>
+                            <td>Recursion depth</td>
+                        </tr>
+                        <tr>
+                            <td>Optimal?</td>
+                            <td class="highlight" style="color: var(--success);">Yes ✓</td>
+                            <td>Proven lower bound</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="derivation">
+<span class="eq">T(n) = 2T(n−1) + 1</span>  <span style="color:#4b5563">← recurrence</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 2[2T(n−2)+1] + 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 2²T(n−2) + 2 + 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 2³T(n−3) + 4 + 2 + 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp; = 2ᵏT(n−k) + Σ2ⁱ<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <span style="color:#4b5563">set k = n−1, T(1) = 1:</span><br>
+<span class="result">T(n) = 2ⁿ − 1</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            Tower of Hanoi — Recursive Divide & Conquer — T(n) = 2ⁿ − 1
+        </footer>
+    </div>
+
+    <script>
+        // ──────────────────────────────────────
+        // Tower of Hanoi — Interactive Visualizer
+        // ──────────────────────────────────────
+
+        const canvas = document.getElementById('hanoiCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI elements
+        const diskCountEl = document.getElementById('diskCount');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedVal = document.getElementById('speedVal');
+        const btnSolve = document.getElementById('btnSolve');
+        const btnStep = document.getElementById('btnStep');
+        const btnPause = document.getElementById('btnPause');
+        const btnReset = document.getElementById('btnReset');
+        const moveCounter = document.getElementById('moveCounter');
+        const formulaDisplay = document.getElementById('formulaDisplay');
+        const statusText = document.getElementById('statusText');
+        const moveLog = document.getElementById('moveLog');
+
+        // Disk colors — beautiful gradient palette
+        const DISK_COLORS = [
+            '#6366f1', '#7c3aed', '#a855f7', '#c084fc',
+            '#ec4899', '#f43f5e', '#f97316', '#eab308'
+        ];
+
+        const PEG_NAMES = ['A', 'B', 'C'];
+
+        // State
+        let pegs = [[], [], []];
+        let moves = [];
+        let currentMove = 0;
+        let numDisks = 3;
+        let animating = false;
+        let paused = false;
+        let stepping = false;
+        let animFrame = null;
+
+        // Animation state
+        let anim = null; // { disk, fromPeg, toPeg, phase, progress, x, y }
+
+        // Layout constants
+        const CANVAS_W = 960;
+        const CANVAS_H = 340;
+        const PEG_SPACING = CANVAS_W / 3;
+        const PEG_X = [PEG_SPACING / 2, PEG_SPACING * 1.5, PEG_SPACING * 2.5];
+        const BASE_Y = CANVAS_H - 40;
+        const PEG_HEIGHT = 200;
+        const DISK_HEIGHT = 24;
+        const MAX_DISK_WIDTH = 140;
+        const MIN_DISK_WIDTH = 40;
+        const PEG_TOP_Y = BASE_Y - PEG_HEIGHT;
+
+        // ── Hanoi solver ──
+        function solveHanoi(n, from, to, aux) {
+            if (n === 0) return;
+            solveHanoi(n - 1, from, aux, to);
+            moves.push({ disk: n, from, to });
+            solveHanoi(n - 1, aux, to, from);
+        }
+
+        // ── Init ──
+        function init() {
+            numDisks = parseInt(diskCountEl.value);
+            pegs = [[], [], []];
+            moves = [];
+            currentMove = 0;
+            animating = false;
+            paused = false;
+            stepping = false;
+            anim = null;
+
+            for (let i = numDisks; i >= 1; i--) {
+                pegs[0].push(i);
+            }
+
+            solveHanoi(numDisks, 0, 2, 1);
+
+            const totalMoves = Math.pow(2, numDisks) - 1;
+            moveCounter.textContent = `0 / ${totalMoves}`;
+
+            const superscripts = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'];
+            const sup = numDisks.toString().split('').map(d => superscripts[parseInt(d)]).join('');
+            formulaDisplay.textContent = `2${sup} − 1 = ${totalMoves}`;
+
+            statusText.textContent = 'Ready';
+            statusText.classList.remove('completed');
+
+            moveLog.innerHTML = '';
+            renderMoveList();
+
+            btnSolve.disabled = false;
+            btnStep.disabled = false;
+            btnPause.disabled = true;
+            btnSolve.textContent = '▶ Solve';
+            btnPause.textContent = '⏸ Pause';
+
+            draw();
+        }
+
+        // ── Drawing ──
+        function getDiskWidth(diskNum) {
+            return MIN_DISK_WIDTH + (diskNum / numDisks) * (MAX_DISK_WIDTH - MIN_DISK_WIDTH);
+        }
+
+        function getDiskColor(diskNum) {
+            return DISK_COLORS[(diskNum - 1) % DISK_COLORS.length];
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+            // Background
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+            bgGrad.addColorStop(0, '#0d1117');
+            bgGrad.addColorStop(1, '#0a0e1a');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+            // Base platform
+            ctx.fillStyle = '#1e2540';
+            ctx.beginPath();
+            const baseRadius = 12;
+            const baseLeft = 30, baseRight = CANVAS_W - 30;
+            const baseTop = BASE_Y, baseBottom = BASE_Y + 14;
+            ctx.moveTo(baseLeft + baseRadius, baseTop);
+            ctx.lineTo(baseRight - baseRadius, baseTop);
+            ctx.quadraticCurveTo(baseRight, baseTop, baseRight, baseTop + baseRadius);
+            ctx.lineTo(baseRight, baseBottom);
+            ctx.lineTo(baseLeft, baseBottom);
+            ctx.lineTo(baseLeft, baseTop + baseRadius);
+            ctx.quadraticCurveTo(baseLeft, baseTop, baseLeft + baseRadius, baseTop);
+            ctx.fill();
+
+            // Pegs
+            for (let p = 0; p < 3; p++) {
+                const pegGrad = ctx.createLinearGradient(PEG_X[p] - 3, 0, PEG_X[p] + 3, 0);
+                pegGrad.addColorStop(0, '#2a3050');
+                pegGrad.addColorStop(0.5, '#3a4570');
+                pegGrad.addColorStop(1, '#2a3050');
+                ctx.fillStyle = pegGrad;
+
+                ctx.beginPath();
+                ctx.roundRect(PEG_X[p] - 3, PEG_TOP_Y, 6, PEG_HEIGHT, 3);
+                ctx.fill();
+
+                // Peg label
+                ctx.fillStyle = '#4b5563';
+                ctx.font = '600 13px "Inter", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(PEG_NAMES[p], PEG_X[p], BASE_Y + 30);
+            }
+
+            // Disks on pegs
+            for (let p = 0; p < 3; p++) {
+                for (let i = 0; i < pegs[p].length; i++) {
+                    const disk = pegs[p][i];
+                    if (anim && anim.disk === disk) continue; // skip animated disk
+                    const x = PEG_X[p];
+                    const y = BASE_Y - (i + 1) * DISK_HEIGHT + 4;
+                    drawDisk(disk, x, y);
+                }
+            }
+
+            // Animated disk
+            if (anim) {
+                drawDisk(anim.disk, anim.x, anim.y, true);
+            }
+        }
+
+        function drawDisk(diskNum, cx, cy, glow = false) {
+            const w = getDiskWidth(diskNum);
+            const h = DISK_HEIGHT - 4;
+            const r = h / 2;
+            const color = getDiskColor(diskNum);
+
+            // Glow
+            if (glow) {
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 18;
+            }
+
+            // Disk body
+            const grad = ctx.createLinearGradient(cx, cy - h/2, cx, cy + h/2);
+            grad.addColorStop(0, lighten(color, 20));
+            grad.addColorStop(0.5, color);
+            grad.addColorStop(1, darken(color, 20));
+            ctx.fillStyle = grad;
+
+            ctx.beginPath();
+            ctx.roundRect(cx - w/2, cy - h/2, w, h, r);
+            ctx.fill();
+
+            // Disk number
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.font = '600 11px "JetBrains Mono", monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(diskNum, cx, cy + 1);
+        }
+
+        function lighten(hex, pct) {
+            const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+            return `rgb(${Math.min(255,r+pct)},${Math.min(255,g+pct)},${Math.min(255,b+pct)})`;
+        }
+
+        function darken(hex, pct) {
+            const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+            return `rgb(${Math.max(0,r-pct)},${Math.max(0,g-pct)},${Math.max(0,b-pct)})`;
+        }
+
+        // ── Animation ──
+        function getSpeed() {
+            return parseInt(speedSlider.value);
+        }
+
+        function animateMove(move) {
+            return new Promise(resolve => {
+                const { disk, from, to } = move;
+
+                // Remove disk from source peg
+                pegs[from].pop();
+
+                const fromX = PEG_X[from];
+                const toX = PEG_X[to];
+                const startY = BASE_Y - (pegs[from].length + 1) * DISK_HEIGHT + 4;
+                const topY = PEG_TOP_Y - 30;
+                const endY = BASE_Y - (pegs[to].length + 1) * DISK_HEIGHT + 4;
+
+                const speed = getSpeed();
+                const duration = 800 / speed; // ms per phase
+                let phase = 0; // 0: up, 1: across, 2: down
+                let startTime = null;
+
+                anim = { disk, x: fromX, y: startY };
+
+                function step(ts) {
+                    if (!startTime) startTime = ts;
+                    const elapsed = ts - startTime;
+                    const t = Math.min(1, elapsed / duration);
+                    const ease = t < 0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; // easeInOutQuad
+
+                    if (phase === 0) {
+                        anim.x = fromX;
+                        anim.y = startY + (topY - startY) * ease;
+                        if (t >= 1) { phase = 1; startTime = null; }
+                    } else if (phase === 1) {
+                        anim.x = fromX + (toX - fromX) * ease;
+                        anim.y = topY;
+                        if (t >= 1) { phase = 2; startTime = null; }
+                    } else {
+                        anim.x = toX;
+                        anim.y = topY + (endY - topY) * ease;
+                        if (t >= 1) {
+                            anim = null;
+                            pegs[to].push(disk);
+                            draw();
+                            resolve();
+                            return;
+                        }
+                    }
+
+                    draw();
+                    animFrame = requestAnimationFrame(step);
+                }
+
+                animFrame = requestAnimationFrame(step);
+            });
+        }
+
+        // ── Solve ──
+        async function solve() {
+            if (animating && !paused) return;
+
+            if (paused) {
+                paused = false;
+                btnPause.textContent = '⏸ Pause';
+                btnPause.disabled = false;
+                statusText.textContent = 'Solving...';
+                runSolve();
+                return;
+            }
+
+            animating = true;
+            paused = false;
+            stepping = false;
+            btnSolve.disabled = true;
+            btnStep.disabled = true;
+            btnPause.disabled = false;
+            statusText.textContent = 'Solving...';
+
+            await runSolve();
+        }
+
+        async function runSolve() {
+            while (currentMove < moves.length) {
+                if (paused || stepping) return;
+
+                await executeCurrentMove();
+            }
+
+            onComplete();
+        }
+
+        async function executeCurrentMove() {
+            const move = moves[currentMove];
+            updateMoveLog(currentMove, 'active');
+            await animateMove(move);
+            updateMoveLog(currentMove, 'done');
+            currentMove++;
+            moveCounter.textContent = `${currentMove} / ${moves.length}`;
+        }
+
+        function onComplete() {
+            animating = false;
+            btnSolve.disabled = true;
+            btnStep.disabled = true;
+            btnPause.disabled = true;
+            statusText.textContent = '✓ Complete!';
+            statusText.classList.add('completed');
+        }
+
+        // ── Step ──
+        async function stepOnce() {
+            if (currentMove >= moves.length) return;
+
+            stepping = true;
+            animating = true;
+            btnStep.disabled = true;
+            btnSolve.disabled = true;
+            statusText.textContent = `Step ${currentMove + 1}...`;
+
+            await executeCurrentMove();
+
+            if (currentMove >= moves.length) {
+                onComplete();
+            } else {
+                stepping = false;
+                animating = false;
+                btnStep.disabled = false;
+                btnSolve.disabled = false;
+                statusText.textContent = 'Paused (step mode)';
+            }
+        }
+
+        // ── Move log ──
+        function renderMoveList() {
+            moveLog.innerHTML = '';
+            for (let i = 0; i < moves.length; i++) {
+                const m = moves[i];
+                const div = document.createElement('div');
+                div.className = 'move-entry';
+                div.id = `move-${i}`;
+                div.innerHTML = `
+                    <span class="move-entry__num">#${i+1}</span>
+                    <span class="move-entry__text">Disk <span>${m.disk}</span> : ${PEG_NAMES[m.from]} → ${PEG_NAMES[m.to]}</span>
+                `;
+                moveLog.appendChild(div);
+            }
+        }
+
+        function updateMoveLog(idx, state) {
+            const el = document.getElementById(`move-${idx}`);
+            if (!el) return;
+            el.className = 'move-entry ' + state;
+            if (state === 'active') {
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // ── Event listeners ──
+        btnSolve.addEventListener('click', solve);
+
+        btnStep.addEventListener('click', stepOnce);
+
+        btnPause.addEventListener('click', () => {
+            if (!animating) return;
+            paused = true;
+            btnPause.disabled = true;
+            btnSolve.disabled = false;
+            btnSolve.textContent = '▶ Resume';
+            statusText.textContent = 'Paused';
+        });
+
+        btnReset.addEventListener('click', () => {
+            if (animFrame) cancelAnimationFrame(animFrame);
+            init();
+        });
+
+        diskCountEl.addEventListener('change', () => {
+            if (animFrame) cancelAnimationFrame(animFrame);
+            init();
+        });
+
+        speedSlider.addEventListener('input', () => {
+            speedVal.textContent = `${speedSlider.value}×`;
+        });
+
+        // ── Canvas roundRect polyfill ──
+        if (!ctx.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (typeof r === 'number') r = [r, r, r, r];
+                this.moveTo(x + r[0], y);
+                this.lineTo(x + w - r[1], y);
+                this.quadraticCurveTo(x + w, y, x + w, y + r[1]);
+                this.lineTo(x + w, y + h - r[2]);
+                this.quadraticCurveTo(x + w, y + h, x + w - r[2], y + h);
+                this.lineTo(x + r[3], y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - r[3]);
+                this.lineTo(x, y + r[0]);
+                this.quadraticCurveTo(x, y, x + r[0], y);
+                this.closePath();
+            };
+        }
+
+        // ── Start ──
+        init();
+    </script>
+</body>
+</html>

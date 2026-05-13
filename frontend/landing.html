@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shree Kamakshi Jewellers — Timeless Elegance</title>
+    <meta name="description" content="Discover exquisite handcrafted gold, silver & bridal jewellery at Shree Kamakshi Jewellers. Trusted since generations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+    <!-- Cursor glow -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Floating gold particles -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav" id="mainNav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <span class="nav-brand-text">SKJ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#heritage" class="nav-link">Heritage</a>
+                <a href="#collections" class="nav-link">Collections</a>
+                <a href="#craftsmanship" class="nav-link">Craftsmanship</a>
+                <a href="#contact" class="nav-link">Visit Us</a>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="ri-sun-line toggle-icon-light"></i>
+                <i class="ri-moon-line toggle-icon-dark"></i>
+                <span class="toggle-slider"></span>
+            </button>
+            <a href="JWE.HTML" class="nav-cta">Enter Shop <i class="ri-arrow-right-up-line"></i></a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg-pattern"></div>
+        <div class="hero-logo-3d" id="heroLogo3d">
+            <img src="skj_logo.png" alt="" class="hero-logo-img">
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge" data-animate="fade-down">
+                <i class="ri-vip-diamond-line"></i> Trusted Since Generations
+            </div>
+            <h1 class="hero-title" data-animate="fade-up">
+                <span class="hero-title-line">Shree</span>
+                <span class="hero-title-line accent">Kamakshi</span>
+                <span class="hero-title-line">Jewellers</span>
+            </h1>
+            <p class="hero-subtitle" data-animate="fade-up" data-delay="200">
+                Where tradition meets timeless elegance. Handcrafted jewellery<br>
+                that tells your story, for every precious moment.
+            </p>
+            <div class="hero-actions" data-animate="fade-up" data-delay="400">
+                <a href="JWE.HTML" class="btn-primary">
+                    Explore Collection <i class="ri-sparkle-line"></i>
+                </a>
+                <a href="#heritage" class="btn-ghost">
+                    Our Story <i class="ri-arrow-down-s-line"></i>
+                </a>
+            </div>
+            <div class="hero-stats" data-animate="fade-up" data-delay="600">
+                <div class="hero-stat">
+                    <span class="hero-stat-num" data-count="25">0</span><span class="hero-stat-plus">+</span>
+                    <span class="hero-stat-label">Years Legacy</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num" data-count="5000">0</span><span class="hero-stat-plus">+</span>
+                    <span class="hero-stat-label">Happy Families</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-num" data-count="100">0</span><span class="hero-stat-plus">%</span>
+                    <span class="hero-stat-label">Pure Hallmark</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-hint" id="scrollHint">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Heritage Section -->
+    <section class="heritage" id="heritage">
+        <div class="section-header" data-animate="fade-up">
+            <span class="section-tag"><i class="ri-ancient-gate-line"></i> Our Heritage</span>
+            <h2 class="section-title">A Legacy Woven<br>in <span class="gold-text">Gold</span></h2>
+        </div>
+        <div class="heritage-grid">
+            <div class="heritage-card" data-animate="fade-right">
+                <div class="heritage-icon"><i class="ri-hand-heart-line"></i></div>
+                <h3>Handcrafted Artistry</h3>
+                <p>Every piece is meticulously crafted by master artisans, preserving centuries-old techniques passed down through generations.</p>
+            </div>
+            <div class="heritage-card" data-animate="fade-up">
+                <div class="heritage-icon"><i class="ri-shield-check-line"></i></div>
+                <h3>Hallmark Certified</h3>
+                <p>100% BIS Hallmark certified gold ensuring the highest purity standards. Your trust is our greatest ornament.</p>
+            </div>
+            <div class="heritage-card" data-animate="fade-left">
+                <div class="heritage-icon"><i class="ri-heart-3-line"></i></div>
+                <h3>Made with Love</h3>
+                <p>From bridal sets to everyday elegance, each creation carries the warmth and dedication of the Kamakshi family.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collections Section -->
+    <section class="collections" id="collections">
+        <div class="section-header" data-animate="fade-up">
+            <span class="section-tag"><i class="ri-sparkle-line"></i> Collections</span>
+            <h2 class="section-title">Curated for <span class="gold-text">You</span></h2>
+        </div>
+        <div class="collections-grid">
+            <div class="collection-card collection-large" data-animate="fade-up" data-delay="0">
+                <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1599643478514-4a1101869e5d?auto=format&fit=crop&w=800&q=80')"></div>
+                <div class="collection-overlay">
+                    <span class="collection-label">Bridal</span>
+                    <h3>Bridal Collection</h3>
+                    <p>Statement pieces for your most special day</p>
+                    <a href="JWE.HTML" class="collection-link">View All <i class="ri-arrow-right-line"></i></a>
+                </div>
+            </div>
+            <div class="collection-card" data-animate="fade-up" data-delay="100">
+                <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=600&q=80')"></div>
+                <div class="collection-overlay">
+                    <span class="collection-label">Gold</span>
+                    <h3>Gold Heritage</h3>
+                    <p>22K & 24K pure gold</p>
+                    <a href="JWE.HTML" class="collection-link">Explore <i class="ri-arrow-right-line"></i></a>
+                </div>
+            </div>
+            <div class="collection-card" data-animate="fade-up" data-delay="200">
+                <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1629224316810-9d8805b95e76?auto=format&fit=crop&w=600&q=80')"></div>
+                <div class="collection-overlay">
+                    <span class="collection-label">Silver</span>
+                    <h3>Silver Elegance</h3>
+                    <p>Oxidized & modern silver</p>
+                    <a href="JWE.HTML" class="collection-link">Explore <i class="ri-arrow-right-line"></i></a>
+                </div>
+            </div>
+            <div class="collection-card" data-animate="fade-up" data-delay="300">
+                <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80')"></div>
+                <div class="collection-overlay">
+                    <span class="collection-label">Daily</span>
+                    <h3>Everyday Charm</h3>
+                    <p>Lightweight daily wear</p>
+                    <a href="JWE.HTML" class="collection-link">Explore <i class="ri-arrow-right-line"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Craftsmanship Marquee -->
+    <section class="marquee-section" id="craftsmanship">
+        <div class="marquee-track">
+            <div class="marquee-content">
+                <span>✦ Handcrafted</span><span>✦ Hallmark Certified</span><span>✦ 22K & 24K Gold</span>
+                <span>✦ Pure Silver</span><span>✦ Bridal Specialists</span><span>✦ Temple Jewellery</span>
+                <span>✦ Trusted Legacy</span><span>✦ Custom Designs</span>
+                <span>✦ Handcrafted</span><span>✦ Hallmark Certified</span><span>✦ 22K & 24K Gold</span>
+                <span>✦ Pure Silver</span><span>✦ Bridal Specialists</span><span>✦ Temple Jewellery</span>
+                <span>✦ Trusted Legacy</span><span>✦ Custom Designs</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="section-header" data-animate="fade-up">
+            <span class="section-tag"><i class="ri-chat-heart-line"></i> Testimonials</span>
+            <h2 class="section-title">Loved by <span class="gold-text">Families</span></h2>
+        </div>
+        <div class="testimonial-cards">
+            <div class="testimonial-card" data-animate="fade-up" data-delay="0">
+                <div class="testimonial-stars">★★★★★</div>
+                <p>"The bridal set was absolutely stunning. Every guest at the wedding asked about the jewellery. Thank you Kamakshi family!"</p>
+                <div class="testimonial-author">— Priya S.</div>
+            </div>
+            <div class="testimonial-card" data-animate="fade-up" data-delay="150">
+                <div class="testimonial-stars">★★★★★</div>
+                <p>"Pure hallmark gold with fair pricing. I've been a loyal customer for over 15 years. The best jewellers in town!"</p>
+                <div class="testimonial-author">— Ramesh K.</div>
+            </div>
+            <div class="testimonial-card" data-animate="fade-up" data-delay="300">
+                <div class="testimonial-stars">★★★★★</div>
+                <p>"Beautiful custom-made temple jewellery for my daughter's wedding. The craftsmanship is simply unmatched."</p>
+                <div class="testimonial-author">— Lakshmi M.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content" data-animate="fade-up">
+            <img src="skj_logo.png" alt="" class="cta-logo">
+            <h2>Begin Your Journey</h2>
+            <p>Visit our store or explore our complete collection online</p>
+            <a href="JWE.HTML" class="btn-primary btn-large">
+                Enter the Shop <i class="ri-store-2-line"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="skj_logo.png" alt="SKJ" class="footer-logo">
+                <p>Shree Kamakshi Jewellers<br><small>Timeless Elegance, Trusted Legacy</small></p>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <a href="#heritage">Heritage</a>
+                <a href="#collections">Collections</a>
+                <a href="JWE.HTML">Shop Now</a>
+            </div>
+            <div class="footer-col">
+                <h4>Visit Us</h4>
+                <p><i class="ri-map-pin-line"></i> Your Store Address</p>
+                <p><i class="ri-phone-line"></i> +91 XXXXX XXXXX</p>
+                <p><i class="ri-instagram-line"></i> @shree_kamakshi_jwellers</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Shree Kamakshi Jewellers. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
+</body>
+</html>
