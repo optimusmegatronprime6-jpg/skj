@@ -1,9 +1,0 @@
-{
-  "name": "shree-kamakshi-jewellers",
-  "version": "1.0.0",
-  "description": "Shree Kamakshi Jewellers — Elegant Jewellery Showcase",
-  "scripts": {
-    "build": "echo 'Static site — no build needed'"
-  },
-  "private": true
-}
